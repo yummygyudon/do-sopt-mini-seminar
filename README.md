@@ -1,0 +1,1 @@
+# do-sopt-mini-seminar
