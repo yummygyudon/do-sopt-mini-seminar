@@ -1,0 +1,111 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.0'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+allprojects {
+	group = 'org.sopt'
+	version = '0.0.1-SNAPSHOT'
+	sourceCompatibility = '17'
+
+	compileJava.options.encoding = 'UTF-8'
+
+	repositories {
+		mavenCentral()
+	}
+
+}
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+//buildscript {
+//	ext {
+//		set('springBootVersion', "3.2.0")
+//	}
+//	repositories {
+//		mavenCentral()
+//		maven { url 'https://repo.spring.io/milestone' }
+//	}
+//	dependencies {
+//		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+//		classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+//	}
+//}
+
+
+// 하위 모든 프로젝트 공통 세팅
+// 각 모듈 공통 적용 설정
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	// 하위 모듈에서 공통으로 사용하는 세팅 추가
+	dependencies {
+		compileOnly 'org.projectlombok:lombok'
+
+		runtimeOnly 'org.postgresql:postgresql'
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+		annotationProcessor 'org.projectlombok:lombok'
+		annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation 'org.springframework.security:spring-security-test'
+		testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+	}
+
+	bootJar {
+		enabled = false
+	}
+	// Build -> jar 파일로 하지 않겠다.
+	jar {
+		enabled = true
+	}
+	test {
+		useJUnitPlatform()
+	}
+	// Build -> bootjar 파일로 하지 않겠다.
+}
+
+/*
+project(':core') {
+	// 공통 코드
+
+	bootJar { enabled = false } // core 은 bootJar 로 패키징 할 필요 없음
+	jar { enabled = true }
+
+	dependencies {
+	}
+}
+
+project(':ensecurity') {
+	bootJar { enabled = true }
+	jar { enabled = false }
+
+	dependencies {
+		compile project(':core') // 컴파일 시 velog-core project 로딩
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+		implementation 'org.springframework.boot:spring-boot-starter-security'
+	}
+}
+
+project(':unsecurity') {
+	bootJar { enabled = true }
+	jar { enabled = false }
+
+	dependencies {
+		compile project(':core') // 컴파일 시 velog-core project 로딩
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	}
+}
+*/
+
+
+

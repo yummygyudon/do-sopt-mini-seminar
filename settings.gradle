@@ -1,0 +1,5 @@
+rootProject.name = 'miminar'
+include 'unsecurity'
+include 'ensecurity'
+include 'core'
+
