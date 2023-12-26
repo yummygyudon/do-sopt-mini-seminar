@@ -10,8 +10,19 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+//    implementation project(":core")
+
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.23'
+    implementation project(path: ':core')
+
+    runtimeOnly 'org.postgresql:postgresql'
+}
+
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
 }
 
 test {

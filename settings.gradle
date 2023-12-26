@@ -1,9 +1,5 @@
 rootProject.name = 'miminar'
-include 'unsecurity'
-include 'ensecurity'
-include 'domain'
-//include 'client'
-include 'storage:db-jpa'
-//findProject(':storage:db-jpa')?.name = 'db-jpa'
-include 'client-feign'
+include 'auth-unsecurity'
+include 'auth-ensecurity'
+include 'core'
 
