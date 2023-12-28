@@ -10,11 +10,11 @@ repositories {
 }
 
 dependencies {
-    implementation project(":domain")
-    implementation project(':storage:db-jpa')
-    implementation project(':client-feign')
+    implementation project(":core")
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+//    implementation 'javax.xml.bind:jaxb-api'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
