@@ -3,7 +3,7 @@ package org.sopt.presentation.auth.dto.request;
 public abstract class AuthRequest {
 
     public record InternalAuthRequest(
-        String username,
+        String email,
         String password
     ) {
     }
@@ -11,11 +11,6 @@ public abstract class AuthRequest {
             String username,
             String password,
             String email
-    ) {
-    }
-
-    public record SocialAuthRequest(
-
     ) {
     }
 
