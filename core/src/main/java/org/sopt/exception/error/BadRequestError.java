@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum BadRequestError implements ErrorEnum {
 
+    // auth
+    INVALID_REDIRECT_URI("Redirect URIs are not matched."),
+
     // auth (token)
     NO_ACCESS_TOKEN("Access Token does not exist."),
     CONTENT_PARSE_FAILED("Token Json Parse Failed."),

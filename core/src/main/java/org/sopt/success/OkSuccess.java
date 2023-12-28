@@ -16,6 +16,8 @@ public enum OkSuccess implements SuccessEnum {
     VIEW_AUTHORITY_SUCCESS(""),
     CHANGE_AUTHORITY_SUCCESS(""),
     DELETE_USER_SUCCESS(""),
+
+    ALREADY_REGISTERED("Account Info is already registered."),
     ;
     private final HttpStatus status = HttpStatus.OK;
     private final String successMessage;

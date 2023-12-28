@@ -11,6 +11,7 @@ public enum UnauthorizedError implements ErrorEnum {
     UNSUPPORTED_PLATFORM("Unsupported Authenticate Platform."),
 
     // auth (token)
+    INVALID_ACCESS_TOKEN("Access Token is invalid."),
     EXPIRED_ACCESS_TOKEN("Access Token is expired."),
     EXPIRED_REFRESH_TOKEN("Refresh Token is expired."),
 

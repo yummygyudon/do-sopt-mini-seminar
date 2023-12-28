@@ -3,6 +3,7 @@ package org.sopt.common.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.sopt.common.model.ApiResponse;
 import org.sopt.exception.base.ErrorEnum;
+import org.sopt.exception.base.SuccessEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +27,18 @@ public abstract class RequestUtils {
     public static String getAuthorizationAccessToken(HttpServletRequest request) {
         // "Bearer " 문자열 제외하고 뽑아오기
         return request.getHeader(AUTHORIZATION).substring(7);
+    }
+
+    public static void setBodyOnResponse(HttpServletResponse response, SuccessEnum success, Object bodyData) {
+        response.setStatus(success.getStatusCode());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        try {
+            String body = objectMapper.writeValueAsString(ApiResponse.success(success, bodyData));
+            response.getWriter().write(body);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void setErrorBodyOnResponse(HttpServletResponse response, ErrorEnum error){

@@ -4,16 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.common.model.AuthTokenResponse;
 import org.sopt.entity.AuthorizationToken;
+import org.sopt.exception.NotFoundException;
+import org.sopt.exception.error.NotFoundError;
 import org.sopt.interfaces.AuthorizationTokenRepository;
-import org.sopt.interfaces.MiminarUserRepository;
 import org.sopt.jwt.provider.JwtTokenProvider;
 import org.sopt.jwt.provider.model.AccessTokenInfo;
-import org.sopt.jwt.provider.model.TokenInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.Optional;
 
 import static org.sopt.common.util.ConstName.AUTH_USER;
 
@@ -35,6 +37,14 @@ public class JwtAuthTokenService {
     @Value("${jwt.access.expiration}")
     private Long accessExpiration;
 
+    public Boolean validateAccessToken(final String atk) {
+        try {
+            Claims tokenClaims = jwtTokenProvider.getTokenClaims(atk);
+            return !tokenClaims.getExpiration().before(new Date());
+        } catch (Exception e) {
+            return false;
+        }
+    }
     @Transactional(readOnly = true)
     public AccessTokenInfo makeAccessTokenToInfo(final String atk) throws JsonProcessingException {
         Claims tokenClaims = jwtTokenProvider.getTokenClaims(atk);
@@ -46,9 +56,16 @@ public class JwtAuthTokenService {
         Claims generatedClaim = jwtTokenProvider.makeInfoToClaim(AUTH_USER, authUser);
         String accessToken = jwtTokenProvider.generateToken(accessTokenSubject, accessExpiration, generatedClaim);
 
-        AuthorizationToken userToken = tokenRepository.findByUserId(authUser.getUserId());
-        userToken.updateAccessToken(accessToken);
-
+        Optional<AuthorizationToken> userToken = tokenRepository.findByUserId(authUser.getUserId());
+        if (userToken.isPresent()) {
+            userToken.get().updateAccessToken(accessToken);
+            return accessToken;
+        }
+        AuthorizationToken token = AuthorizationToken.builder()
+                .userId(authUser.getUserId())
+                .accessToken(accessToken)
+                .build();
+        tokenRepository.save(token);
         return accessToken;
     }
 
@@ -57,10 +74,15 @@ public class JwtAuthTokenService {
     public String createRefreshToken(final Long userId) {
         String refreshToken = jwtTokenProvider.generateToken(refreshTokenSubject, refreshExpiration, null);
 
-        AuthorizationToken userToken = tokenRepository.findByUserId(userId);
-        userToken.updateRefreshToken(refreshToken);
+        Optional<AuthorizationToken> userToken = tokenRepository.findByUserId(userId);
+        if (userToken.isEmpty()) {
+            throw new NotFoundException(NotFoundError.ACCESS_TOKEN_NOT_FOUND);
+        }
+        userToken.get().updateRefreshToken(refreshToken);
 
         return refreshToken;
     }
+
+
 
 }
