@@ -12,7 +12,6 @@ import org.sopt.global.external.oauth.client.info.OAuthUserInfoMapper;
 import org.sopt.global.external.oauth.client.info.OAuthUserInfo;
 import org.sopt.interfaces.AuthorityRepository;
 import org.sopt.interfaces.MiminarUserRepository;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -57,16 +56,11 @@ public class SocialAuthService implements OAuth2UserService<OAuth2UserRequest, O
                 Authority authority = registerNewAuthorize(miminarUser);
                 return new CustomOAuthUser(
                         miminarUser,
-//                        Collections.singleton(new SimpleGrantedAuthority(authority.getRole().name())),
                         List.of(authority),
                         attributes
                 );
             }
             List<Authority> userAuthorities = authorityRepository.findAllByUserId(targetUser.get().getId());
-//            List<SimpleGrantedAuthority> simpleGrantedAuthorities = userAuthorities.stream()
-//                    .map(authority -> new SimpleGrantedAuthority(authority.getRole().name()))
-//                    .toList();
-
             return new CustomOAuthUser(
                     targetUser.get(),
                     userAuthorities,
