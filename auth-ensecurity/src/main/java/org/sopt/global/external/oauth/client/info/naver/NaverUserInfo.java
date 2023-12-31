@@ -19,17 +19,20 @@ public class NaverUserInfo extends OAuthUserInfo {
 
     @Override
     public String getName() {
-        return (String) attributes.get("name");
+        Map<String, Object> naverAccount = (Map<String, Object>) attributes.get("response");
+        return (String) naverAccount.get("name");
     }
 
     @Override
     public String getEmail() {
-        return (String) attributes.get("email");
+        Map<String, Object> naverAccount = (Map<String, Object>) attributes.get("response");
+        return (String) naverAccount.get("email");
     }
 
     @Override
     public String getPrimaryValue() {
-        return (String) attributes.get("id");
+        Map<String, Object> naverAccount = (Map<String, Object>) attributes.get("response");
+        return (String) naverAccount.get("id");
     }
 
     @Override
