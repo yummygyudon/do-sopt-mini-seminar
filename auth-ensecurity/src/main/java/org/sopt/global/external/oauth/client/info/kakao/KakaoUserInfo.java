@@ -1,7 +1,5 @@
 package org.sopt.global.external.oauth.client.info.kakao;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.sopt.entity.enums.RegisterPlatform;
 import org.sopt.global.external.oauth.client.info.OAuthUserInfo;
@@ -19,17 +17,20 @@ public class KakaoUserInfo extends OAuthUserInfo {
 
     @Override
     public String getName() {
-        return (String) ((Map<String,Object>) attributes.get("profile")).get("nickname");
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        Map<String, Object> profile = (Map<String, Object>)kakaoAccount.get("profile");
+        return (String) profile.get("nickname");
     }
 
     @Override
     public String getEmail() {
-        return (String) attributes.get("email");
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        return (String) kakaoAccount.get("email");
     }
 
     @Override
     public String getPrimaryValue() {
-        return (String) attributes.get("id");
+        return String.valueOf(attributes.get("id"));
     }
 
     @Override

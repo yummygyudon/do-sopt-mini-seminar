@@ -40,6 +40,7 @@ public class SocialAuthService implements OAuth2UserService<OAuth2UserRequest, O
 
         // 소셜 로그인에서 API가 제공하는 userInfo Json 값(유저 정보들)
         Map<String, Object> attributes = oAuth2User.getAttributes();
+        log.info("Attibutes : {}", attributes.toString());
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         RegisterPlatform registerPlatform = RegisterPlatform.getPlatformByRegistrationId(registrationId);

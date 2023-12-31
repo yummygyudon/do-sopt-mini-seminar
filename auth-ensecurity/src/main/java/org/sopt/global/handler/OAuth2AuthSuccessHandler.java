@@ -1,28 +1,18 @@
 package org.sopt.global.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.common.model.ApiResponse;
-import org.sopt.common.model.AuthTokenResponse;
-import org.sopt.common.util.RequestUtils;
 import org.sopt.domain.CookieAuthorizationRequestRepository;
 import org.sopt.domain.CustomOAuthUser;
 import org.sopt.entity.MiminarUser;
 import org.sopt.exception.BadRequestException;
 import org.sopt.exception.error.BadRequestError;
 import org.sopt.global.utils.CookieUtils;
-import org.sopt.jwt.provider.JwtTokenProvider;
 import org.sopt.jwt.provider.model.AccessTokenInfo;
-import org.sopt.jwt.provider.model.TokenInfo;
 import org.sopt.jwt.service.JwtAuthTokenService;
-import org.sopt.success.OkSuccess;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -33,10 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Optional;
 
-import static org.sopt.common.util.ConstName.AUTH_USER;
 import static org.sopt.common.util.ConstName.REFRESH_TOKEN_NAME;
 import static org.sopt.domain.CookieAuthorizationRequestRepository.*;
 
@@ -69,6 +57,8 @@ public class OAuth2AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHand
              *   Security OAuthClient에 의해 진행되는 중의 요청이기 때문이다.
              */
         }
+        log.info("URL : {}",request.getRequestURL().toString());
+        log.info("code : {}",request.getParameter("code"));
         String targetUrl = decideTargetUrl(request, response, authentication);
         // 인증 요청과 인증 정보에 대한 활용이 끝난 이후, 깨끗이 비워줍니다.
         clearAuthenticationAttributes(request,response);
