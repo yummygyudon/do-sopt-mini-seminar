@@ -1,10 +1,12 @@
 package org.sopt.presentation.user;
 
 import lombok.RequiredArgsConstructor;
+import org.sopt.application.user.UserService;
+import org.sopt.application.user.info.UserInfo;
 import org.sopt.common.model.ApiResponse;
-import org.sopt.entity.MiminarUser;
-import org.sopt.presentation.user.dto.request.UserRequest;
-import org.sopt.presentation.user.dto.request.UserRequest.RevokeRoleRequest;
+import org.sopt.domain.CustomInternalAuthUser;
+import org.sopt.entity.enums.Role;
+import org.sopt.global.Interceptor.annotation.PermissionScope;
 import org.sopt.presentation.user.dto.response.UserResponse;
 import org.sopt.success.OkSuccess;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,57 +16,65 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
-    // 접속 유저 정보 조회
-    @GetMapping("/info/me")
-    public ApiResponse<UserResponse.UserInfo> getCurrentUserInfo(
-        @AuthenticationPrincipal MiminarUser user
-    ) {
 
+    private final UserService userService;
+
+    // 접속 유저 정보 조회
+    @GetMapping("/info")
+    public ApiResponse<UserResponse.UserInfo> getCurrentUserInfo(
+        @AuthenticationPrincipal CustomInternalAuthUser user
+    ) {
+        UserInfo.UserProfile userProfile = userService.getUserProfile(user.getCustomUser().getId());
         return ApiResponse
                 .success(
                     OkSuccess.VIEW_USER_INFO_SUCCESS,
-                    new UserResponse.UserInfo()
+                    new UserResponse.UserInfo(
+                            userProfile.name(),
+                            userProfile.email(),
+                            String.join(",", userProfile.roles()),
+                            userProfile.registerPlatform()
+                    )
                 );
     }
 
     // 특정 유저 정보 확인 - Only Admin
     @GetMapping("/info/{userId}")
+    @PermissionScope(
+            targetRoles = {
+                    Role.ADMIN, Role.MASTER
+            }
+    )
     public ApiResponse<UserResponse.UserInfo> getSpecificUserInfo(
-        @AuthenticationPrincipal MiminarUser user,
         @PathVariable("userId") Long specificUserId
     ) {
-        return ApiResponse
-                .success(
-                    OkSuccess.VIEW_USER_INFO_SUCCESS,
-                    new UserResponse.UserInfo()
-                );
-    }
-
-    // 특정 유저 권한 변경 - Only Admin & Master
-    // Admin -> Member : Master 만 가능
-    @PutMapping("/revoke/{userId}")
-    public ApiResponse<UserResponse.UserRoleStatus> revokeSpecificUserRole(
-            @AuthenticationPrincipal MiminarUser user,
-            @PathVariable("userId") Long specificUserId,
-            @RequestBody RevokeRoleRequest revokeRequest
-    ) {
-
+        UserInfo.UserProfile userProfile = userService.getUserProfile(specificUserId);
         return ApiResponse
                 .success(
                         OkSuccess.VIEW_USER_INFO_SUCCESS,
-                        new UserResponse.UserRoleStatus()
+                        new UserResponse.UserInfo(
+                                userProfile.name(),
+                                userProfile.email(),
+                                String.join(",", userProfile.roles()),
+                                userProfile.registerPlatform()
+                        )
                 );
     }
 
     // 특정 유저 제거 - Only Master
     @DeleteMapping("/remove/{userId}")
-    public ApiResponse<?> deleteSpecificUserRole(
-            @AuthenticationPrincipal MiminarUser user,
+    @PermissionScope(
+            targetRoles = {
+                    Role.MASTER
+            }
+    )
+    public ApiResponse<Void> deleteSpecificUserRole(
             @PathVariable("userId") Long specificUserId
     ) {
+        userService.deleteUser(specificUserId);
         return ApiResponse
                 .success(
-                        OkSuccess.VIEW_USER_INFO_SUCCESS
+                        OkSuccess.VIEW_USER_INFO_SUCCESS,
+                        null
                 );
     }
 }

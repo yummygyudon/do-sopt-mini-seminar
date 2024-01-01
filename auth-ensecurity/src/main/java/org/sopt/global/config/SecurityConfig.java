@@ -24,7 +24,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig{
 
     /**
      * Redirect URL 들의 경우, 클라이언트분들과 협의하시면 됩니다.
@@ -49,9 +49,13 @@ public class SecurityConfig {
 
     private final SocialAuthService socialAuthService;
     private final InternalAuthService internalAuthService;
+
+    // Handler
     private final OAuth2AuthSuccessHandler oAuth2AuthSuccessHandler;
     private final OAuth2AuthSuccessHandler2 oAuth2AuthSuccessHandler2;
     private final OAuth2AuthFailureHandler oAuth2AuthFailureHandler;
+
+    // Filter
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
 
@@ -87,7 +91,7 @@ public class SecurityConfig {
                 .antMatchers(WHITE_PATTERNS).permitAll()
                 .antMatchers("/api/v1/user/remove/**").access("hasAnyAuthority('MASTER')")
                 .antMatchers("/api/v1/user/revoke/**").access("hasAnyAuthority('ADMIN','MASTER')")
-                .antMatchers("/api/v1/user/**").access("hasAuthority('MEMBER')")
+                .antMatchers("/api/v1/user/**").access("hasAnyAuthority('MEMBER')")
                 .anyRequest().authenticated()
                 .and()
                 .userDetailsService(internalAuthService)

@@ -17,6 +17,7 @@ public enum NotFoundError implements ErrorEnum {
 
     // user
     USER_NOT_FOUND("Can not found user."),
+    USER_DOES_NOT_HAVE_ANY_ROLE("Can not found roles of user."),
     ;
     private final HttpStatus status = HttpStatus.NOT_FOUND;
     private final String errorMessage;

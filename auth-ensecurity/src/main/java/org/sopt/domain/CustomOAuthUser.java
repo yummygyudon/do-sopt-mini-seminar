@@ -1,7 +1,5 @@
 package org.sopt.domain;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.sopt.entity.Authority;
@@ -10,7 +8,6 @@ import org.sopt.entity.base.CustomUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
@@ -71,7 +68,7 @@ public class CustomOAuthUser implements UserDetails, OAuth2User, CustomUser {
 
     @Override
     public String getName() {
-        return null;
+        return this.customUser.getName();
     }
 
     @Override

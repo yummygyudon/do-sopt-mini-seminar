@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.sopt.application.auth.internal.InternalAuthService;
 import org.sopt.common.util.RequestUtils;
 import org.sopt.exception.NotFoundException;
@@ -25,6 +26,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 /**
  * 인증이 되면 SecurityContext에 보관하여 보안을 통과
  */
@@ -45,6 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     Authentication authentication
                             = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    log.info("Authentication Principal : {}", authentication.getPrincipal().toString());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     /**
                      * 이런 방식도 있음
